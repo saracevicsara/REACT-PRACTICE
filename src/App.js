@@ -1,25 +1,39 @@
-import logo from './logo.svg';
-import './App.css';
+import SearchInput from "./SearchInput";
+import DisplayProducts from "./DisplayProducts";
+import axios from "axios";
+import { useState, useEffect } from "react";
 
-function App() {
+const App = () => {
+  const [products, setProducts] = useState([]);
+  const [filteredProducts, setFilteredProducts] = useState([]);
+  const [searchInput, setSearchInput] = useState("");
+
+  useEffect(() => {
+    axios
+      .get("https://fakestoreapi.com/products")
+      .then((res) => {
+        setProducts(res.data);
+        setFilteredProducts(res.data);
+      })
+      .catch((message) => console.log(message));
+  }, []);
+
+  const handleInput = (inputedValue) => {
+    setSearchInput(inputedValue);
+
+    setFilteredProducts(
+      products.filter((el) =>
+        el.title.toLowerCase().includes(searchInput.toLowerCase())
+      )
+    );
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      <SearchInput handleOnChange={handleInput} />
+      <DisplayProducts products={filteredProducts} />
     </div>
   );
-}
+};
 
 export default App;
