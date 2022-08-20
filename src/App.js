@@ -13,7 +13,7 @@ const App = () => {
       .get("https://fakestoreapi.com/products")
       .then((res) => {
         setProducts(res.data);
-        setFilteredProducts(res.data);
+        setFilteredProductsw(res.data);
       })
       .catch((message) => console.log(message));
   }, []);
