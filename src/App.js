@@ -6,31 +6,33 @@ import { useState, useEffect } from "react";
 const App = () => {
   const [products, setProducts] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState([]);
-  const [searchInput, setSearchInput] = useState("");
+  const [categories, setCategories] = useState([]);
 
   useEffect(() => {
     axios
       .get("https://fakestoreapi.com/products")
-      .then((res) => {
-        setProducts(res.data);
-        setFilteredProductsw(res.data);
+      .then(({ data }) => {
+        setCategories([...new Set(data.map((d) => d.category))]);
+        setProducts(data);
+        setFilteredProducts(data);
       })
       .catch((message) => console.log(message));
   }, []);
 
   const handleInput = (inputedValue) => {
-    setSearchInput(inputedValue);
-
-    setFilteredProducts(
-      products.filter((el) =>
-        el.title.toLowerCase().includes(searchInput.toLowerCase())
-      )
-    );
+    if (inputedValue === "") {
+      setFilteredProducts(products);
+    } else {
+      setFilteredProducts(
+        products.filter((el) =>
+          el.title.toLowerCase().includes(inputedValue.toLowerCase())
+        )
+      );
+    }
   };
-
   return (
     <div>
-      <SearchInput handleOnChange={handleInput} />
+      <SearchInput categoryOptions={categories} handleOnChange={handleInput} />
       <DisplayProducts products={filteredProducts} />
     </div>
   );
